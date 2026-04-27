@@ -1136,7 +1136,10 @@ export async function execute(ctx: AdapterExecutionContext): Promise<AdapterExec
     idempotencyKey: ctx.runId,
   };
   delete agentParams.text;
-  agentParams.paperclip = paperclipPayload;
+  // LOCAL PATCH (revert when OpenClaw 2026.4.26 ships): OpenClaw 2026.4.25's
+  // schema rejects unknown `paperclip` property. Env vars + wake-text already
+  // carry the same context. See branch local-patches/openclaw-2026.4.25-compat.
+  void paperclipPayload;
 
   const configuredAgentId = nonEmpty(ctx.config.agentId);
   if (configuredAgentId && !nonEmpty(agentParams.agentId)) {
